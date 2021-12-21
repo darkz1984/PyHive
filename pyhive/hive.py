@@ -120,7 +120,8 @@ class Connection(object):
         password=None,
         check_hostname=None,
         ssl_cert=None,
-        thrift_transport=None
+        thrift_transport=None,
+        timeout=10
     ):
         """Connect to HiveServer2
 
@@ -133,6 +134,7 @@ class Connection(object):
         :param password: Use with auth='LDAP' or auth='CUSTOM' only
         :param thrift_transport: A ``TTransportBase`` for custom advanced usage.
             Incompatible with host, port, auth, kerberos_service_name, and password.
+        :timeout: connect timeout , default is 10 second
 
         The way to support LDAP and GSSAPI is originated from cloudera/Impyla:
         https://github.com/cloudera/impyla/blob/255b07ed973d47a3395214ed92d35ec0615ebf62
@@ -195,6 +197,7 @@ class Connection(object):
             if auth is None:
                 auth = 'NONE'
             socket = thrift.transport.TSocket.TSocket(host, port)
+            socket.setTimeout(timeout * 1000)
             if auth == 'NOSASL':
                 # NOSASL corresponds to hive.server2.authentication=NOSASL in hive-site.xml
                 self._transport = thrift.transport.TTransport.TBufferedTransport(socket)
