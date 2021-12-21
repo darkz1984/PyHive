@@ -257,6 +257,7 @@ class Connection(object):
                 "Unable to handle protocol version {}".format(response.serverProtocolVersion)
             with contextlib.closing(self.cursor()) as cursor:
                 cursor.execute('USE `{}`'.format(database))
+            socket.setTimeout(0)   # set timeout after connected
         except:
             self._transport.close()
             raise
